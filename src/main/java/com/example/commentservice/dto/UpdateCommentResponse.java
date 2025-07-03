@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DeleteCommentResponse {
+public class UpdateCommentResponse {
 
     private Long commentId;
+    private String content;
 }
