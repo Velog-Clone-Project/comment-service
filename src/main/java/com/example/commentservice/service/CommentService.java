@@ -60,7 +60,6 @@ public class CommentService {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
 
-       // TODO: 예외처리 리팩토링
         if (!comment.getUserId().equals(userId)) {
             throw new CommentAccessDeniedException();
         }
