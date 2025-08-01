@@ -1,10 +1,12 @@
 package com.example.commentservice.service;
 
+import com.example.commentservice.client.PostServiceClient;
+import com.example.commentservice.client.UserServiceClient;
 import com.example.commentservice.domain.CommentEntity;
 import com.example.commentservice.dto.*;
-import com.example.commentservice.exception.CommentAccessDeniedException;
-import com.example.commentservice.exception.CommentNotFoundException;
+import com.example.commentservice.exception.*;
 import com.example.commentservice.repository.CommentRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,30 +18,43 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public CreateCommentResponse createComment(CreateCommentRequest request, String userId){
+    private final UserServiceClient userServiceClient;
+    private final PostServiceClient postServiceClient;
+
+    public CreateCommentResponse createComment(CreateCommentRequest request, String userId) {
 
         // parentId 검증
-        // TODO: 예외처리 리팩토링
         if (request.getParentId() != null) {
             CommentEntity parentComment = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
+                    .orElseThrow(CommentNotFoundException::new);
 
             if (!parentComment.getPostId().equals(request.getPostId())) {
-                throw new IllegalArgumentException("Parent comment does not belong to the same post");
+                throw new ParentCommentMismatchException();
             }
         }
-        // TODO: postId 자체가 유효한지도 post-service 연동 후 캐시/검증 필요
 
-        // TODO: 유저 정보(userId)로 기반으로 user-service에서
-        //      authorName, authorProfileImageUrl을 조회하는 로직 추가 필요(event-driven)
+        try {
+            postServiceClient.checkPostExists(request.getPostId());
+        } catch (FeignException.NotFound e) {
+            throw new PostNotFoundException();
+        } catch (FeignException e) {
+            throw new ExternalServiceException(e);
+        }
+
+        InternalUserProfileResponse profile;
+        try {
+            profile = userServiceClient.getUserProfile(userId);
+        } catch (FeignException.NotFound e) {
+            throw new UserNotFoundException();
+        }
 
         CommentEntity comment = CommentEntity.builder()
                 .postId(request.getPostId())
                 .parentId(request.getParentId())
                 .userId(userId)
                 .content(request.getContent())
-                .authorName("jihyun") // mock
-                .authorProfileImageUrl("https://example.com/profile/jihyun.jpg") // mock
+                .authorName(profile.getProfileName())
+                .authorProfileImageUrl(profile.getProfileImageUrl())
                 .createdAt(LocalDateTime.now())
                 .build();
 
