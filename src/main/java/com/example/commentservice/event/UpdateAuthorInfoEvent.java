@@ -1,4 +1,4 @@
-package com.example.commentservice.dto;
+package com.example.commentservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateAuthorInfoRequest {
+public class UpdateAuthorInfoEvent {
     private String userId;
     private String authorName;
     private String authorProfileImageUrl;

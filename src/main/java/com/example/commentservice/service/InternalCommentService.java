@@ -2,7 +2,7 @@ package com.example.commentservice.service;
 
 import com.example.commentservice.domain.CommentEntity;
 import com.example.commentservice.dto.CommentDto;
-import com.example.commentservice.dto.UpdateAuthorInfoRequest;
+import com.example.commentservice.event.UpdateAuthorInfoEvent;
 import com.example.commentservice.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class InternalCommentService {
     private final CommentRepository commentRepository;
 
 
-    public void updateAuthorInfo(UpdateAuthorInfoRequest request) {
+    public void updateAuthorInfo(UpdateAuthorInfoEvent request) {
 
         commentRepository.updateAuthorInfoByUserId(
                 request.getUserId(),
@@ -28,11 +28,11 @@ public class InternalCommentService {
         );
     }
 
-    public void deleteAllPostsByUserId(String userId) {
+    public void deleteAllCommentsByUserId(String userId) {
         commentRepository.deleteByUserId(userId);
     }
 
-    public void deleteAllPostsByPostId(Long postId) {
+    public void deleteAllCommentsByPostId(Long postId) {
         commentRepository.deleteByPostId(postId);
     }
 

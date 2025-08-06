@@ -1,7 +1,7 @@
 package com.example.commentservice.controller;
 
 import com.example.commentservice.dto.CommentDto;
-import com.example.commentservice.dto.UpdateAuthorInfoRequest;
+import com.example.commentservice.event.UpdateAuthorInfoEvent;
 import com.example.commentservice.service.InternalCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class InternalCommentController {
     private final InternalCommentService internalCommentService;
 
     @PutMapping("/author-info")
-    public ResponseEntity<Void> updateAuthorInfo(@RequestBody UpdateAuthorInfoRequest request) {
+    public ResponseEntity<Void> updateAuthorInfo(@RequestBody UpdateAuthorInfoEvent request) {
 
         internalCommentService.updateAuthorInfo(request);
         return ResponseEntity.ok().build();
@@ -27,14 +27,14 @@ public class InternalCommentController {
     @DeleteMapping("/by-user")
     public ResponseEntity<Void> deleteAllCommentsByUser(@RequestParam String userId) {
 
-       internalCommentService.deleteAllPostsByUserId(userId);
+       internalCommentService.deleteAllCommentsByUserId(userId);
        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/by-post")
     public ResponseEntity<Void> deleteAllCommentsByPost(@RequestParam Long postId) {
 
-        internalCommentService.deleteAllPostsByPostId(postId);
+        internalCommentService.deleteAllCommentsByPostId(postId);
         return ResponseEntity.ok().build();
     }
 
