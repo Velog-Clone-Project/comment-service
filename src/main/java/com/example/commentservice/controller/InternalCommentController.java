@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/internal/comments")
 public class InternalCommentController {
