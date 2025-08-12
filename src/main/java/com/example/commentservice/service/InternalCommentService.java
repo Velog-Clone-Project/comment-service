@@ -6,6 +6,7 @@ import com.example.commentservice.event.UpdateAuthorInfoEvent;
 import com.example.commentservice.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,6 +20,8 @@ public class InternalCommentService {
     private final CommentRepository commentRepository;
 
 
+    // TODO: 이거 왜 @Transactional이 필요한지 확인 필요
+    @Transactional
     public void updateAuthorInfo(UpdateAuthorInfoEvent request) {
 
         commentRepository.updateAuthorInfoByUserId(
